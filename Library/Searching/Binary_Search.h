@@ -7,6 +7,7 @@
 #define __Binary_Search__
 
 #include <vector>
+#include <utility>
 
 namespace Orion_Quest{
 template<class T>
@@ -19,7 +20,7 @@ class Binary_Search
     ~Binary_Search() {}
 
 //##################################################################### 
-    int Search(const T key,const int start,const int end);
+    std::pair<bool,int> Search(const T key,const int start,const int end);
 //##################################################################### 
 };
 }

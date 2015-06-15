@@ -31,7 +31,8 @@ int main(int argc,char **argv)
     std::cout<<std::endl;
 
     Binary_Search<int> bs(data);
-    std::cout<<"Index of 60: "<<bs.Search(60,0,data.size()-1)<<std::endl;
+    std::pair<bool,int> result=bs.Search(92,0,data.size()-1);
+    std::cout<<"Index of 92: ("<<result.first<<","<<result.second<<")"<<std::endl;
 
     return 0;
 }
