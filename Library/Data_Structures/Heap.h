@@ -19,13 +19,13 @@ class Heap
     Heap(const std::vector<T>& data_input);
 
     inline int Parent(const int i)
-    {return i>>1;}
+    {return (i-1)>>1;}
 
     inline int Left(const int i)
-    {return i<<1+1;}
+    {return (i<<1)+1;}
 
     inline int Right(const int i)
-    {return i<<1+2;}
+    {return (i<<1)+2;}
 
     const int Size()
     {return size;}
@@ -33,8 +33,11 @@ class Heap
 //##################################################################### 
     void Insert(const T key);
     void Print();
+    int Level(int i);
+    void Heapify();
 //##################################################################### 
   private:
+    void Max_Heapify(const int i);
     void Increase_Key(const int i,const T key);
 //##################################################################### 
 };

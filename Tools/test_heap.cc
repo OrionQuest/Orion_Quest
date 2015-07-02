@@ -13,10 +13,17 @@ int main(int argc,char** argv)
         return 1;
     }
 
-    Heap<int> heap;
-    for(int i=1;i<argc;++i) heap.Insert(atoi(argv[i]));
+    Heap<int> heap1;
+    std::vector<int> data;
+    for(int i=1;i<argc;++i){
+        heap1.Insert(atoi(argv[i]));
+        data.push_back(atoi(argv[i]));
+    }
 
-    std::cout<<"Heap: ";
-    heap.Print();
+    heap1.Print();
+
+    Heap<int> heap2(data);
+    heap2.Heapify();
+    heap2.Print();
     return 0;
 }
