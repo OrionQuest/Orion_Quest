@@ -13,17 +13,26 @@ int main(int argc,char** argv)
         return 1;
     }
 
-    Heap<int> heap1;
     std::vector<int> data;
     for(int i=1;i<argc;++i){
-        heap1.Insert(atoi(argv[i]));
         data.push_back(atoi(argv[i]));
     }
 
-    heap1.Print();
+    Heap<int> heap(data);
+    //heap.Sort();
 
-    Heap<int> heap2(data);
-    heap2.Heapify();
-    heap2.Print();
+    //std::cout<<"Data:";
+    //for(int i=0;i<data.size();++i) std::cout<<" "<<data[i];
+    //std::cout<<std::endl;
+
+    heap.Heapify();
+
+    std::cout<<"Descending order: ";
+    while(!heap.Empty()){
+        int max_value=heap.Extract_Max();
+        std::cout<<" "<<max_value;
+    }
+    std::cout<<std::endl;
+
     return 0;
 }

@@ -10,13 +10,13 @@ using namespace Orion_Quest;
 //#####################################################################
 template<class T> Heap<T>::
 Heap()
-    :size(0)
+    :data(*(new std::vector<T>())),size(0)
 {}
 //#####################################################################
 // Constructor
 //#####################################################################
 template<class T> Heap<T>::
-Heap(const std::vector<T>& data_input)
+Heap(std::vector<T>& data_input)
     :data(data_input),size(data_input.size())
 {}
 //#####################################################################
@@ -102,6 +102,39 @@ Max_Heapify(const int i)
         data[i]=temp;
         Max_Heapify(largest);
     }
+}
+//#####################################################################
+// Sort
+//#####################################################################
+template<class T> void Heap<T>::
+Sort()
+{
+    Heapify();
+    int i=size-1;
+    do{
+        i=size-1;
+        T temp=data[i];
+        data[i]=data[0];
+        data[0]=temp;
+        --size;
+        Max_Heapify(0);
+    }while(i>0);
+}
+//#####################################################################
+// Extract_Max
+//#####################################################################
+template<class T> T Heap<T>::
+Extract_Max()
+{
+    if(size<=0){
+        std::cout<<"Heap underflow!";
+        return -std::numeric_limits<T>::max();
+    }
+    T value=data[0];
+    data[0]=data[size-1];
+    --size;
+    Max_Heapify(0);
+    return value;
 }
 //#####################################################################
 template class Heap<int>;
