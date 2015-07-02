@@ -26,13 +26,17 @@ int main(int argc,char** argv)
     //std::cout<<std::endl;
 
     heap.Heapify();
+    heap.Print();
 
-    std::cout<<"Descending order: ";
-    while(!heap.Empty()){
-        int max_value=heap.Extract_Max();
-        std::cout<<" "<<max_value;
-    }
-    std::cout<<std::endl;
+    heap.Delete(3);
+    heap.Print();
+
+    //std::cout<<"Descending order: ";
+    //while(!heap.Empty()){
+    //    int max_value=heap.Extract_Max();
+    //    std::cout<<" "<<max_value;
+    //}
+    //std::cout<<std::endl;
 
     return 0;
 }

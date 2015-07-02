@@ -36,6 +36,7 @@ class Heap
 
 //##################################################################### 
     void Insert(const T key);
+    void Delete(const int i);
     void Print();
     int Level(int i);
     void Heapify();

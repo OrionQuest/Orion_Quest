@@ -2,6 +2,7 @@
 // Copyright (c) 2015, Mridul Aanjaneya.
 //#####################################################################
 #include <Data_Structures/Heap.h>
+#include <cassert>
 #include <iostream>
 #include <limits>
 using namespace Orion_Quest;
@@ -127,7 +128,7 @@ template<class T> T Heap<T>::
 Extract_Max()
 {
     if(size<=0){
-        std::cout<<"Heap underflow!";
+        std::cout<<"Heap underflow!"<<std::endl;
         return -std::numeric_limits<T>::max();
     }
     T value=data[0];
@@ -135,6 +136,22 @@ Extract_Max()
     --size;
     Max_Heapify(0);
     return value;
+}
+//#####################################################################
+// Delete
+//#####################################################################
+template<class T> void Heap<T>::
+Delete(const int i)
+{
+    if(size<=0){
+        std::cout<<"Heap underflow!"<<std::endl;
+        return;
+    }
+    assert(i>=0 && i<size && size>0);
+    std::cout<<"Deleting: "<<data[i]<<std::endl;
+    data[i]=data[size-1];
+    --size;
+    Max_Heapify(i);
 }
 //#####################################################################
 template class Heap<int>;
