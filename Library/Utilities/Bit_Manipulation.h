@@ -18,5 +18,19 @@ void Swap_Bits(int& num,const int i,const int j)
     }
 }
 //#####################################################################
+// Reverse all bits
+//#####################################################################
+void Reverse_Bits(int& num)
+{
+    int number_of_bits=0,temp=num;
+    while(temp>0){
+        temp/=2;
+        ++number_of_bits;
+    }
+
+    for(int i=0;i<number_of_bits/2;++i)
+        Swap_Bits(num,i,number_of_bits-i-1);
+}
+//#####################################################################
 }
 #endif
