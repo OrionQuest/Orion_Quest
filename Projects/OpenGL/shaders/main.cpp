@@ -12,18 +12,21 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 // vertex shader
 const GLchar* vertex_shader_source="# version 330 core\n"
         "layout (location=0) in vec3 position;\n"
+        "layout (location=1) in vec3 color;\n"
+        "out vec3 our_color;\n"
         "void main()\n"
         "{\n"
-        "gl_Position = vec4(position.x,position.y,position.z,1.0);\n"
+        "gl_Position = vec4(position,1.0);\n"
+        "our_color = color;\n"
         "}\0";
 
 // fragment shader
 const GLchar* fragment_shader_source="# version 330 core\n"
+        "in vec3 our_color;\n"
         "out vec4 color;\n"
-        "uniform vec4 our_color;\n"
         "void main()\n"
         "{\n"
-        "color=our_color;\n"
+        "color=vec4(our_color,1.0f);\n"
         "}\0";
 
 int main()
@@ -57,9 +60,11 @@ int main()
     glfwSetKeyCallback(window,key_callback);
 
     GLfloat vertices[]={
-        -0.5f,-0.5f,0.0f,
-        0.5f,-0.5f,0.0f,
-        0.0f,0.5f,0.0f};
+        // positions        // colors
+        -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
+    };
 
     GLuint VBO;
     glGenBuffers(1,&VBO);
@@ -115,9 +120,12 @@ int main()
     // copy the vertices in a buffer
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-    // set vertex attribute pointers
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GL_FLOAT),(GLvoid*)0);
+    // set position attribute pointers
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(GLvoid*)0);
     glEnableVertexAttribArray(0);
+    // set color attribute pointers
+    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
     // unbind the vertex array object
     glBindVertexArray(0);
 
@@ -129,11 +137,6 @@ int main()
 
         // use shader program
         glUseProgram(shader_program);
-
-        GLfloat time_value=glfwGetTime();
-        GLfloat green_value=(sin(time_value)/2)+0.5;
-        GLint vertex_color_location=glGetUniformLocation(shader_program,"our_color");
-        glUniform4f(vertex_color_location,0.0f,green_value,0.0f,1.0f);
 
         // draw
         glBindVertexArray(VAO);
