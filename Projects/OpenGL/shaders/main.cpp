@@ -1,33 +1,14 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <cmath>
-#include <iostream>
+
+#include "Shader.h"
 
 void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 {
     if(key==GLFW_KEY_ESCAPE && action==GLFW_PRESS)
         glfwSetWindowShouldClose(window,GL_TRUE);
 }
-
-// vertex shader
-const GLchar* vertex_shader_source="# version 330 core\n"
-        "layout (location=0) in vec3 position;\n"
-        "layout (location=1) in vec3 color;\n"
-        "out vec3 our_color;\n"
-        "void main()\n"
-        "{\n"
-        "gl_Position = vec4(position,1.0);\n"
-        "our_color = color;\n"
-        "}\0";
-
-// fragment shader
-const GLchar* fragment_shader_source="# version 330 core\n"
-        "in vec3 our_color;\n"
-        "out vec4 color;\n"
-        "void main()\n"
-        "{\n"
-        "color=vec4(our_color,1.0f);\n"
-        "}\0";
 
 int main()
 {
@@ -59,6 +40,8 @@ int main()
 
     glfwSetKeyCallback(window,key_callback);
 
+    Shader our_shader("shader.vs","shader.frag");
+
     GLfloat vertices[]={
         // positions        // colors
         -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
@@ -66,66 +49,24 @@ int main()
          0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f
     };
 
-    GLuint VBO;
+    GLuint VAO,VBO;
     glGenBuffers(1,&VBO);
-    glBindBuffer(GL_ARRAY_BUFFER,VBO);
-    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-
-    // vertex shader
-    GLuint vertex_shader=glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader,1,&vertex_shader_source,NULL);
-    glCompileShader(vertex_shader);
-
-    GLint success;
-    GLchar info_log[512];
-    glGetShaderiv(vertex_shader,GL_COMPILE_STATUS,&success);
-    if(!success)
-    {
-        glGetShaderInfoLog(vertex_shader,512,NULL,info_log);
-        std::cout<<"Error! Vertex Shader::Compilation Failed!"<<std::endl<<info_log<<std::endl;
-    }
-
-    // fragment shader
-    GLuint fragment_shader=glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader,1,&fragment_shader_source,NULL);
-    glCompileShader(fragment_shader);
-
-    glGetShaderiv(fragment_shader,GL_COMPILE_STATUS,&success);
-    if(!success)
-    {
-        glGetShaderInfoLog(fragment_shader,512,NULL,info_log);
-        std::cout<<"Error! Fragment Shader::Compilation Failed!"<<std::endl<<info_log<<std::endl;
-    }
-
-    // shader program
-    GLuint shader_program=glCreateProgram();
-    glAttachShader(shader_program,vertex_shader);
-    glAttachShader(shader_program,fragment_shader);
-    glLinkProgram(shader_program);
-
-    glGetProgramiv(shader_program,GL_LINK_STATUS,&success);
-    if(!success)
-    {
-        glGetProgramInfoLog(shader_program,512,NULL,info_log);
-        std::cout<<"Error! Shader Program::Linking Failed!"<<std::endl<<info_log<<std::endl;
-    }
-
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-
-    GLuint VAO;
     glGenVertexArrays(1,&VAO);
+
     // bind vertex array object
     glBindVertexArray(VAO);
+
     // copy the vertices in a buffer
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
+
     // set position attribute pointers
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(GLvoid*)0);
     glEnableVertexAttribArray(0);
     // set color attribute pointers
     glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
+
     // unbind the vertex array object
     glBindVertexArray(0);
 
@@ -136,7 +77,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         // use shader program
-        glUseProgram(shader_program);
+        our_shader.Use();
 
         // draw
         glBindVertexArray(VAO);
