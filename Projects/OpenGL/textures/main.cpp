@@ -43,11 +43,23 @@ int main()
 
     Shader our_shader("shader.vs","shader.frag");
 
-    // load textures
-    GLuint texture;
-    glGenTextures(1,&texture);
-    glBindTexture(GL_TEXTURE_2D,texture);
+    GLuint texture1,texture2;
+
+    // generate texture 1
+    glGenTextures(1,&texture1);
+    glBindTexture(GL_TEXTURE_2D,texture1);
     unsigned char* image=SOIL_load_image("container.jpg",&width,&height,0,SOIL_LOAD_RGB);
+    glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,image);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // free image data
+    SOIL_free_image_data(image);
+    glBindTexture(GL_TEXTURE_2D,0);
+
+    // generate texture 2
+    glGenTextures(1,&texture2);
+    glBindTexture(GL_TEXTURE_2D,texture2);
+    image=SOIL_load_image("awesomeface.png",&width,&height,0,SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,image);
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -106,7 +118,13 @@ int main()
         our_shader.Use();
 
         // draw
-        glBindTexture(GL_TEXTURE_2D,texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,texture1);
+        glUniform1i(glGetUniformLocation(our_shader.program,"our_texture1"),0);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D,texture2);
+        glUniform1i(glGetUniformLocation(our_shader.program,"our_texture2"),1);
+
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
         glBindVertexArray(0);
