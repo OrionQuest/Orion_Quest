@@ -48,10 +48,16 @@ int main()
     // generate texture 1
     glGenTextures(1,&texture1);
     glBindTexture(GL_TEXTURE_2D,texture1);
+    // set texture parameters
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+    // set texture filtering
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    // load, create and generate mipmaps
     unsigned char* image=SOIL_load_image("container.jpg",&width,&height,0,SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,image);
     glGenerateMipmap(GL_TEXTURE_2D);
-
     // free image data
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D,0);
@@ -59,20 +65,26 @@ int main()
     // generate texture 2
     glGenTextures(1,&texture2);
     glBindTexture(GL_TEXTURE_2D,texture2);
+    // set texture parameters
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    // set texture filtering
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    // load, create and generate mipmaps
     image=SOIL_load_image("awesomeface.png",&width,&height,0,SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,image);
     glGenerateMipmap(GL_TEXTURE_2D);
-
     // free image data
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D,0);
 
     GLfloat vertices[]={
         // positions        // colors           // textures
-         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   2.0f, 2.0f,
+         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   2.0f, 0.0f,
         -0.5f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f
+        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 2.0f
     };
 
     GLuint indices[]={
