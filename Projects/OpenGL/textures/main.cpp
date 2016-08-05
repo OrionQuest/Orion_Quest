@@ -5,10 +5,24 @@
 
 #include "Shader.h"
 
+GLfloat mix_value=0.2f;
+
 void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 {
     if(key==GLFW_KEY_ESCAPE && action==GLFW_PRESS)
         glfwSetWindowShouldClose(window,GL_TRUE);
+
+    if(key==GLFW_KEY_UP && action==GLFW_PRESS)
+    {
+        mix_value+=0.1f;
+        if(mix_value>1.0f) mix_value=1.0f;
+    }
+
+    if(key==GLFW_KEY_DOWN && action==GLFW_PRESS)
+    {
+        mix_value-=0.1f;
+        if(mix_value<0.0f) mix_value=0.0f;
+    }
 }
 
 int main()
@@ -136,6 +150,8 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D,texture2);
         glUniform1i(glGetUniformLocation(our_shader.program,"our_texture2"),1);
+
+        glUniform1f(glGetUniformLocation(our_shader.program,"mix_value"),mix_value);
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
