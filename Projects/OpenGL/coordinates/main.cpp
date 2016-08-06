@@ -106,18 +106,14 @@ int main()
         // positions        // colors           // textures
          0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
          0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
         -0.5f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
         -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f
     };
 
-    GLuint indices[]={
-        0, 1, 3,
-        1, 2, 3
-    };
-
-    GLuint VAO,VBO,EBO;
+    GLuint VAO,VBO;
     glGenBuffers(1,&VBO);
-    glGenBuffers(1,&EBO);
     glGenVertexArrays(1,&VAO);
 
     // bind vertex array object
@@ -126,9 +122,6 @@ int main()
     // copy the vertices in a buffer
     glBindBuffer(GL_ARRAY_BUFFER,VBO);
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
-    // copy the index array in an element buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indices),indices,GL_STATIC_DRAW);
 
     // set position attribute pointers
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)0);
@@ -180,7 +173,7 @@ int main()
 
         // draw
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);
+        glDrawArrays(GL_TRIANGLES,0,6);
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
@@ -189,7 +182,6 @@ int main()
     // deallocate all resources
     glDeleteVertexArrays(1,&VAO);
     glDeleteBuffers(1,&VBO);
-    glDeleteBuffers(1,&EBO);
     // terminate GLFW
     glfwTerminate();
 
