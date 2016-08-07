@@ -103,13 +103,13 @@ int main()
     glBindTexture(GL_TEXTURE_2D,0);
 
     GLfloat vertices[]={
-        // positions        // colors           // textures
-         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
-         0.5f,-0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-        -0.5f,-0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  1.0f, 1.0f, 0.0f,   0.0f, 1.0f
+        // positions        // textures
+         0.5f, 0.5f, 0.0f,  1.0f, 1.0f,
+         0.5f,-0.5f, 0.0f,  1.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,  0.0f, 1.0f,
+         0.5f,-0.5f, 0.0f,  1.0f, 0.0f,
+        -0.5f,-0.5f, 0.0f,  0.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f,  0.0f, 1.0f
     };
 
     GLuint VAO,VBO;
@@ -124,14 +124,11 @@ int main()
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);
 
     // set position attribute pointers
-    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)0);
+    glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(GLvoid*)0);
     glEnableVertexAttribArray(0);
-    // set color attribute pointers
-    glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
     // set texture attribute pointers
-    glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,8*sizeof(GL_FLOAT),(GLvoid*)(6*sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1,2,GL_FLOAT,GL_FALSE,5*sizeof(GL_FLOAT),(GLvoid*)(3*sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
 
     // unbind the vertex array object
     glBindVertexArray(0);
