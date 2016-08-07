@@ -104,12 +104,47 @@ int main()
 
     GLfloat vertices[]={
         // positions        // textures
-         0.5f, 0.5f, 0.0f,  1.0f, 1.0f,
-         0.5f,-0.5f, 0.0f,  1.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  0.0f, 1.0f,
-         0.5f,-0.5f, 0.0f,  1.0f, 0.0f,
-        -0.5f,-0.5f, 0.0f,  0.0f, 0.0f,
-        -0.5f, 0.5f, 0.0f,  0.0f, 1.0f
+        -0.5f,-0.5f,-0.5f,  0.0f,0.0f,
+         0.5f,-0.5f,-0.5f,  1.0f,0.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+        -0.5f, 0.5f,-0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,0.0f,
+
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+         0.5f,-0.5f, 0.5f,  1.0f,0.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,1.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,1.0f,
+        -0.5f, 0.5f, 0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+
+        -0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+        -0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+        -0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+         0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+         0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+         0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+         0.5f,-0.5f,-0.5f,  1.0f,1.0f,
+         0.5f,-0.5f, 0.5f,  1.0f,0.0f,
+         0.5f,-0.5f, 0.5f,  1.0f,0.0f,
+        -0.5f,-0.5f, 0.5f,  0.0f,0.0f,
+        -0.5f,-0.5f,-0.5f,  0.0f,1.0f,
+
+        -0.5f, 0.5f,-0.5f,  0.0f,1.0f,
+         0.5f, 0.5f,-0.5f,  1.0f,1.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+         0.5f, 0.5f, 0.5f,  1.0f,0.0f,
+        -0.5f, 0.5f, 0.5f,  0.0f,0.0f,
+        -0.5f, 0.5f,-0.5f,  0.0f,1.0f
     };
 
     GLuint VAO,VBO;
@@ -133,20 +168,18 @@ int main()
     // unbind the vertex array object
     glBindVertexArray(0);
 
-    // world space transform
-    glm::mat4 model;
-    model=glm::rotate(model,glm::radians(-55.0f),glm::vec3(1.0f,0.0f,0.0f));
-
     // view space transform
     glm::mat4 view;
     // note that we're translating the scene in the reverse direction of where we want to move
     view=glm::translate(view,glm::vec3(0.0f,0.0f,-3.0f));
 
+    glEnable(GL_DEPTH_TEST);
+
     while(!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
         glClearColor(.2f,.3f,.3f,1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // use shader program
         our_shader.Use();
@@ -161,6 +194,10 @@ int main()
 
         glUniform1f(glGetUniformLocation(our_shader.program,"mix_value"),mix_value);
 
+        // world space transform
+        glm::mat4 model;
+        model=glm::rotate(model,glm::radians((GLfloat)glfwGetTime()*50.0f),glm::vec3(0.5f,1.0f,0.0f));
+
         GLuint model_location=glGetUniformLocation(our_shader.program,"model");
         glUniformMatrix4fv(model_location,1,GL_FALSE,glm::value_ptr(model));
         GLuint view_location=glGetUniformLocation(our_shader.program,"view");
@@ -170,7 +207,7 @@ int main()
 
         // draw
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES,0,6);
+        glDrawArrays(GL_TRIANGLES,0,36);
         glBindVertexArray(0);
 
         glfwSwapBuffers(window);
