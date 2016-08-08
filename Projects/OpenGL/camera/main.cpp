@@ -11,10 +11,23 @@
 #include "Shader.h"
 
 GLfloat mix_value=0.2f;
+bool keys[1024];
+GLfloat delta_time=0.0f;    // time between current frame and last frame
+GLfloat last_frame=0.0f;    // time of last frame
 
 glm::vec3 camera_position=glm::vec3(0.0f,0.0f,3.0f);
 glm::vec3 camera_front=glm::vec3(0.0f,0.0f,-1.0f);
 glm::vec3 camera_up=glm::vec3(0.0f,1.0f,0.0f);
+
+void do_movement()
+{
+    // camera controls
+    GLfloat camera_speed=5.0f*delta_time;
+    if(keys[GLFW_KEY_W]) camera_position+=camera_speed*camera_front;
+    if(keys[GLFW_KEY_S]) camera_position-=camera_speed*camera_front;
+    if(keys[GLFW_KEY_A]) camera_position-=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
+    if(keys[GLFW_KEY_D]) camera_position+=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
+}
 
 void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 {
@@ -33,11 +46,8 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
         if(mix_value<0.0f) mix_value=0.0f;
     }
 
-    GLfloat camera_speed=0.05f;
-    if(key==GLFW_KEY_W) camera_position+=camera_speed*camera_front;
-    if(key==GLFW_KEY_S) camera_position-=camera_speed*camera_front;
-    if(key==GLFW_KEY_A) camera_position-=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
-    if(key==GLFW_KEY_D) camera_position+=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
+    if(action==GLFW_PRESS) keys[key]=true;
+    else if(action==GLFW_RELEASE) keys[key]=false;
 }
 
 int main()
@@ -198,8 +208,13 @@ int main()
     while(!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
+        do_movement();
         glClearColor(.2f,.3f,.3f,1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        GLfloat current_frame=glfwGetTime();
+        delta_time=current_frame-last_frame;
+        last_frame=current_frame;
 
         // use shader program
         our_shader.Use();
