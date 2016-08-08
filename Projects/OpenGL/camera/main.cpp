@@ -12,6 +12,10 @@
 
 GLfloat mix_value=0.2f;
 
+glm::vec3 camera_position=glm::vec3(0.0f,0.0f,3.0f);
+glm::vec3 camera_front=glm::vec3(0.0f,0.0f,-1.0f);
+glm::vec3 camera_up=glm::vec3(0.0f,1.0f,0.0f);
+
 void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
 {
     if(key==GLFW_KEY_ESCAPE && action==GLFW_PRESS)
@@ -28,6 +32,12 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
         mix_value-=0.1f;
         if(mix_value<0.0f) mix_value=0.0f;
     }
+
+    GLfloat camera_speed=0.05f;
+    if(key==GLFW_KEY_W) camera_position+=camera_speed*camera_front;
+    if(key==GLFW_KEY_S) camera_position-=camera_speed*camera_front;
+    if(key==GLFW_KEY_A) camera_position-=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
+    if(key==GLFW_KEY_D) camera_position+=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
 }
 
 int main()
@@ -205,9 +215,7 @@ int main()
         glUniform1f(glGetUniformLocation(our_shader.program,"mix_value"),mix_value);
 
         // view space transform
-        glm::mat4 view;
-        GLfloat cam_X=sin(glfwGetTime())*radius,cam_Z=cos(glfwGetTime())*radius;
-        view=glm::lookAt(glm::vec3(cam_X,0.0,cam_Z),glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0));
+        glm::mat4 view=glm::lookAt(camera_position,camera_position+camera_front,camera_up);
 
         GLuint model_location=glGetUniformLocation(our_shader.program,"model");
         GLuint view_location=glGetUniformLocation(our_shader.program,"view");
