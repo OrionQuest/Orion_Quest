@@ -12,8 +12,13 @@
 
 GLfloat mix_value=0.2f;
 bool keys[1024];
-GLfloat delta_time=0.0f;    // time between current frame and last frame
-GLfloat last_frame=0.0f;    // time of last frame
+GLfloat delta_time=0.0f;                // time between current frame and last frame
+GLfloat last_frame=0.0f;                // time of last frame
+GLfloat last_X=0.0f,last_Y=0.0f;
+GLfloat yaw=-90.0f;                     // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing
+                                        // to the right (due to how Euler angles work) so we initially rotate a bit to the left.
+GLfloat pitch=0.0f;
+bool first_mouse=true;
 
 glm::vec3 camera_position=glm::vec3(0.0f,0.0f,3.0f);
 glm::vec3 camera_front=glm::vec3(0.0f,0.0f,-1.0f);
@@ -50,6 +55,36 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
     else if(action==GLFW_RELEASE) keys[key]=false;
 }
 
+void mouse_callback(GLFWwindow* window,double xpos,double ypos)
+{
+    if(first_mouse)
+    {
+        last_X=xpos;
+        last_Y=ypos;
+        first_mouse=false;
+    }
+
+    GLfloat x_offset=xpos-last_X;
+    GLfloat y_offset=last_Y-ypos;
+    last_X=xpos;last_Y=ypos;
+
+    GLfloat sensitivity=0.05f;
+    x_offset*=sensitivity;
+    y_offset*=sensitivity;
+
+    yaw+=x_offset;
+    pitch+=y_offset;
+
+    if(pitch>89.0f) pitch=89.0f;
+    else if(pitch<-89.0f) pitch=-89.0f;
+
+    glm::vec3 front;
+    front.x=cos(glm::radians(pitch))*cos(glm::radians(yaw));
+    front.y=sin(glm::radians(pitch));
+    front.z=cos(glm::radians(pitch))*sin(glm::radians(yaw));
+    camera_front=glm::normalize(front);
+}
+
 int main()
 {
     glfwInit();
@@ -66,6 +101,7 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSetInputMode(window,GLFW_CURSOR,GLFW_CURSOR_DISABLED);
 
     glewExperimental=GL_TRUE;
     if(glewInit()!=GLEW_OK)
@@ -77,12 +113,14 @@ int main()
     int width,height;
     glfwGetFramebufferSize(window,&width,&height);
     glViewport(0,0,width,height);
+    last_X=width/2.0;last_Y=height/2.0;
 
     // projection matrix
     glm::mat4 projection;
     projection=glm::perspective(glm::radians(45.0f),(float)width/height,0.1f,100.0f);
 
     glfwSetKeyCallback(window,key_callback);
+    glfwSetCursorPosCallback(window,mouse_callback);
 
     Shader our_shader("shader.vs","shader.frag");
 
