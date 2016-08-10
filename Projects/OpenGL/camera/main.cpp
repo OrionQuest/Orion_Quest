@@ -15,6 +15,7 @@ bool keys[1024];
 GLfloat delta_time=0.0f;                // time between current frame and last frame
 GLfloat last_frame=0.0f;                // time of last frame
 GLfloat last_X=0.0f,last_Y=0.0f;
+GLfloat fov=45.0f;
 GLfloat yaw=-90.0f;                     // yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing
                                         // to the right (due to how Euler angles work) so we initially rotate a bit to the left.
 GLfloat pitch=0.0f;
@@ -34,7 +35,14 @@ void do_movement()
     if(keys[GLFW_KEY_D]) camera_position+=glm::normalize(glm::cross(camera_front,camera_up))*camera_speed;
 }
 
-void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
+void scroll_callback(GLFWwindow *window,double xoffset,double yoffset)
+{
+    if(fov>=1.0f && fov<=45.0f)  fov-=yoffset;
+    if(fov<=1.0f) fov=1.0f;
+    if(fov>=45.0f) fov=45.0f;
+}
+
+void key_callback(GLFWwindow *window,int key,int scancode,int action,int mode)
 {
     if(key==GLFW_KEY_ESCAPE && action==GLFW_PRESS)
         glfwSetWindowShouldClose(window,GL_TRUE);
@@ -55,7 +63,7 @@ void key_callback(GLFWwindow* window,int key,int scancode,int action,int mode)
     else if(action==GLFW_RELEASE) keys[key]=false;
 }
 
-void mouse_callback(GLFWwindow* window,double xpos,double ypos)
+void mouse_callback(GLFWwindow *window,double xpos,double ypos)
 {
     if(first_mouse)
     {
@@ -115,12 +123,9 @@ int main()
     glViewport(0,0,width,height);
     last_X=width/2.0;last_Y=height/2.0;
 
-    // projection matrix
-    glm::mat4 projection;
-    projection=glm::perspective(glm::radians(45.0f),(float)width/height,0.1f,100.0f);
-
     glfwSetKeyCallback(window,key_callback);
     glfwSetCursorPosCallback(window,mouse_callback);
+    glfwSetScrollCallback(window,scroll_callback);
 
     Shader our_shader("shader.vs","shader.frag");
 
@@ -269,6 +274,10 @@ int main()
 
         // view space transform
         glm::mat4 view=glm::lookAt(camera_position,camera_position+camera_front,camera_up);
+
+        // projection matrix
+        glfwGetFramebufferSize(window,&width,&height);
+        glm::mat4 projection=glm::perspective(glm::radians(fov),(float)width/height,0.1f,100.0f);
 
         GLuint model_location=glGetUniformLocation(our_shader.program,"model");
         GLuint view_location=glGetUniformLocation(our_shader.program,"view");
